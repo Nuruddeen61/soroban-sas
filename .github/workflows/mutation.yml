@@ -57,13 +57,6 @@ jobs:
           echo "cargo-mutants exit code: $code"
           if [ "$code" -eq 2 ] || [ "$code" -eq 3 ]; then exit 0; fi
           exit $code
-        run: |
-          set +e
-          cargo mutants -p "$PKG" --timeout-multiplier 3
-          code=$?
-          echo "cargo-mutants exit code: $code"
-          if [ "$code" -eq 2 ] || [ "$code" -eq 3 ]; then exit 0; fi
-          exit $code
       - name: Upload results
         if: ${{ always() && inputs.package != '' }}
         uses: actions/upload-artifact@v4
