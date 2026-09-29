@@ -39,10 +39,15 @@ jobs:
           tool: cargo-mutants
       - name: List workspace packages
         run: cargo metadata --no-deps --format-version 1 | jq -r '.packages[].name'
-      - name: Run mutation testing
+      - name: Diagnose mutants (list only)
         if: ${{ inputs.package != '' }}
         env:
           PKG: ${{ inputs.package }}
+        run: |
+          cargo mutants -p "$PKG" --list-files || true
+          cargo mutants -p "$PKG" --list | head -30 || true
+      - name: Run mutation testing
+        if: ${{ inputs.package != '' }}
         run: |
           set +e
           cargo mutants -p "$PKG" --timeout-multiplier 3
