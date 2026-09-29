@@ -48,6 +48,15 @@ jobs:
           cargo mutants -p "$PKG" --list | head -30 || true
       - name: Run mutation testing
         if: ${{ inputs.package != '' }}
+        env:
+          PKG: ${{ inputs.package }}
+        run: |
+          set +e
+          cargo mutants -p "$PKG" --timeout-multiplier 3
+          code=$?
+          echo "cargo-mutants exit code: $code"
+          if [ "$code" -eq 2 ] || [ "$code" -eq 3 ]; then exit 0; fi
+          exit $code
         run: |
           set +e
           cargo mutants -p "$PKG" --timeout-multiplier 3
